@@ -29,14 +29,15 @@ def get_adjacency_matrix_from_edge_list(
     if edges.shape[0] > 0:
         assert np.min(edges) >= 0 and np.max(edges) < n, "Edges out of range"
 
-    # Put ones where the edges belong
-    # [OBFUSCATED CODE CLARIFICATION] The operation below performs low-level at-index addition in a loop
+    # Put ones where the edges belong.
+    # [OBFUSCATED CODE CLARIFICATION] The operation below performs low-level at-index addition in a loop through the
+    # pairs of indices.
     np.add.at(adj, tuple(edges.T), 1)  # Original direction
 
     if not directed:
         np.add.at(adj, tuple(np.flip(edges.T, axis=0)), 1)  # Opposite direction
 
-    # Self-connections are included through the addition of
+    # Self-connections are included through the addition of a diagonal.
     if self_connections:
         adj += np.eye(n, dtype=np.int32)
 

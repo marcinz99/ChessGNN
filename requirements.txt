@@ -1,0 +1,7 @@
+chess>=1.9.4
+flake8>=6.0.0
+networkx>=2.8.8
+numpy>=1.21.6
+pandas>=1.3.5
+pytest>=3.6.4
+tensorflow>=2.9.2

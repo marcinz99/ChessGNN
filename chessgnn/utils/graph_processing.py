@@ -58,7 +58,7 @@ def get_neighbors_graph_with_kdtree(
         randomized: bool = False,
 ) -> List[np.ndarray]:
     """
-    Constructs a neighboring graphs using a KD-Tree in a batch setting.
+    Construct a neighboring graphs using a KD-Tree in a batch setting.
 
     KD-Tree is used specifically for faster processing of large inputs (high number of vertices).
 
@@ -143,7 +143,8 @@ def get_neighbors_graph_pairwise(
         randomized: bool = False,
 ) -> List[np.ndarray]:
     """
-    Constructs a neighboring graphs using mostly vectorized all-vs-all exhaustive pairwise distance comparison.
+    Construct a neighboring graphs using mostly vectorized all-vs-all exhaustive pairwise distance comparison in a batch
+    setting.
 
     Might be quick for input of moderate size, but for better performance with large inputs consider using KD-Tree
     equivalent of this function.
@@ -159,7 +160,7 @@ def get_neighbors_graph_pairwise(
 
     Returns:
         A list of graphs in COOrdinate format, organized as a 2D array, where first column corresponds to the edge
-        sources (from X) and the second one to the edge sinks (from KD-Tree).
+        sources (from X) and the second one to the edge sinks (from X_ext).
     """
     assert radius or limit, "Either `radius` or `limit` has to be set."
 

@@ -159,8 +159,7 @@ def get_neighbors_graph_pairwise(
 
     Returns:
         A list of graphs in COOrdinate format, organized as a 2D array, where first column corresponds to the edge
-        sources (from X) and the second one to the edge sinks (from KD-Tree). Keep in mind, however, that the same index
-        in X and KD-Tree MAY NOT correspond to the same point, unless you made it so.
+        sources (from X) and the second one to the edge sinks (from KD-Tree).
     """
     assert radius or limit, "Either `radius` or `limit` has to be set."
 

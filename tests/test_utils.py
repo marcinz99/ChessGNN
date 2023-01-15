@@ -83,10 +83,10 @@ def test_get_neighbors_graph_with_kdtree():
     from sklearn.neighbors import KDTree
     from chessgnn.utils.graph_processing import get_neighbors_graph_with_kdtree
 
-    space = np.array(  # Points to be retrieved.
+    X_ext = np.array(  # Points to be retrieved.
         [[0.6, 0.5], [-0.7, 0.1], [0.1, 0.5], [0.4, 0.4], [-0.4, 0.7],
          [0.4, -2.0], [0.2, -1.0], [-0.4, 0.3], [-0.1, 0.4], [-0.4, 1.1]])
-    kdt = KDTree(space)
+    kdt = KDTree(X_ext)
 
     X = np.array([  # Query points.
         [[1.31, -0.57], [0.04, -0.1], [0.7, 0.49], [2.05, 1.15],
@@ -96,7 +96,7 @@ def test_get_neighbors_graph_with_kdtree():
     ])
 
     # Note: The solution below seems to be nice and easy (and is!), but scales rather poorly.
-    diffs = (X[:, :, np.newaxis, :] - space[np.newaxis, np.newaxis, :, :])  # Shape = [2, 8, 10, 2]
+    diffs = (X[:, :, np.newaxis, :] - X_ext[np.newaxis, np.newaxis, :, :])  # Shape = [2, 8, 10, 2]
     dists = np.sqrt(np.sum(diffs ** 2, axis=-1))  # Shape = [2, 8, 10]
 
     idxs_sorted = np.argsort(dists, axis=-1)
@@ -165,3 +165,62 @@ def test_get_neighbors_graph_with_kdtree():
             get_neighbors_graph_with_kdtree(X[0], kdt, limit=7, randomized=True)
         ),
         False)
+
+    # Randomized with limit=1 should be equal to non-randomized with the same limit.
+    np.testing.assert_array_equal(
+        get_neighbors_graph_with_kdtree(X[0], kdt, limit=1)[0],
+        get_neighbors_graph_with_kdtree(X[0], kdt, limit=1, randomized=True)[0]
+    )
+
+
+def test_get_neighbors_graph_pairwise():
+    # Comparing with already well-tested function of exactly the same usage.
+    from sklearn.neighbors import KDTree
+    from chessgnn.utils.graph_processing import get_neighbors_graph_with_kdtree, get_neighbors_graph_pairwise
+
+    X_ext = np.array(  # Points to be retrieved.
+        [[0.6, 0.5], [-0.7, 0.1], [0.1, 0.5], [0.4, 0.4], [-0.4, 0.7],
+         [0.4, -2.0], [0.2, -1.0], [-0.4, 0.3], [-0.1, 0.4], [-0.4, 1.1]])
+    kdt = KDTree(X_ext)
+
+    X = np.array([  # Query points.
+        [[1.31, -0.57], [0.04, -0.1], [0.7, 0.49], [2.05, 1.15],
+         [0.93, -1.32], [1.38, -0.38], [-0.27, -0.06], [-0.2, -0.25]],
+        [[-1.01, -0.14], [-1.36, -0.59], [2.02, -0.37], [0.29, 0.14],
+         [-1.87, -1.1], [-1.01, -0.58], [0.43, 0.4], [0.74, 0.34]]
+    ])
+
+    # Regular input - radius and limit
+    graphs_kdtree = get_neighbors_graph_with_kdtree(X, kdt, radius=1, limit=5)
+    graphs_pairwise = get_neighbors_graph_pairwise(X, X_ext, radius=1, limit=5)
+
+    for (graph_kdtree, graph_pairwise) in zip(graphs_kdtree, graphs_pairwise):
+        np.testing.assert_array_equal(graph_kdtree, graph_pairwise)
+
+    # Regular input - just radius
+    graphs_kdtree = get_neighbors_graph_with_kdtree(X, kdt, radius=1)
+    graphs_pairwise = get_neighbors_graph_pairwise(X, X_ext, radius=1)
+
+    for (graph_kdtree, graph_pairwise) in zip(graphs_kdtree, graphs_pairwise):
+        np.testing.assert_array_equal(graph_kdtree, graph_pairwise)
+
+    # Regular input - just limit
+    graphs_kdtree = get_neighbors_graph_with_kdtree(X, kdt, limit=5)
+    graphs_pairwise = get_neighbors_graph_pairwise(X, X_ext, limit=5)
+
+    for (graph_kdtree, graph_pairwise) in zip(graphs_kdtree, graphs_pairwise):
+        np.testing.assert_array_equal(graph_kdtree, graph_pairwise)
+
+    # If randomized output is expected, two consecutive run should not be equal by design (usually).
+    np.testing.assert_equal(
+        np.array_equal(
+            get_neighbors_graph_pairwise(X[0], X_ext, limit=7, randomized=True),
+            get_neighbors_graph_pairwise(X[0], X_ext, limit=7, randomized=True)
+        ),
+        False)
+
+    # Randomized with limit=1 should be equal to non-randomized with the same limit.
+    np.testing.assert_array_equal(
+        get_neighbors_graph_pairwise(X[0], X_ext, limit=1)[0],
+        get_neighbors_graph_pairwise(X[0], X_ext, limit=1, randomized=True)[0]
+    )

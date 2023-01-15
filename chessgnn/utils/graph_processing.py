@@ -133,3 +133,92 @@ def get_neighbors_graph_with_kdtree(
         coo_graphs.append(neighbors)
 
     return coo_graphs
+
+
+def get_neighbors_graph_pairwise(
+        X: np.ndarray,
+        X_ext: np.ndarray,
+        radius: Optional[Union[int, float]] = None,
+        limit: Optional[int] = None,
+        randomized: bool = False,
+) -> List[np.ndarray]:
+    """
+    Constructs a neighboring graphs using mostly vectorized all-vs-all exhaustive pairwise distance comparison.
+
+    Might be quick for input of moderate size, but for better performance with large inputs consider using KD-Tree
+    equivalent of this function.
+
+    Args:
+        X: Query points organized in a 3D or 2D array. If 2D array is passed, each row is a single point of a given
+            dimensionality; in case of 3D input, the outermost dimension is for batch.
+        X_ext: 2D array with the points to be extracted.
+        radius: Maximum interaction distance for neighbors.
+        limit: Maximum number of neighbors per vertex.
+        randomized: If both limit and radius are set, you may want to randomize the results before limiting. Otherwise,
+            the results are returned sorted.
+
+    Returns:
+        A list of graphs in COOrdinate format, organized as a 2D array, where first column corresponds to the edge
+        sources (from X) and the second one to the edge sinks (from KD-Tree). Keep in mind, however, that the same index
+        in X and KD-Tree MAY NOT correspond to the same point, unless you made it so.
+    """
+    assert radius or limit, "Either `radius` or `limit` has to be set."
+
+    # If there is a single query matrix, parse it as a single-example batch anyway.
+    if len(X.shape) == 2:
+        X = X[np.newaxis, ...]
+
+    def shuffle(x: np.ndarray) -> np.ndarray:
+        # Supplementary function for inline shuffle. Maybe a better solution can be found.
+        np.random.shuffle(x)
+        return x
+
+    # Calculate pairwise differences.
+    diffs = (X[:, :, np.newaxis, :] - X_ext[np.newaxis, np.newaxis, :, :])  # Shape = [b, n_x, n_ext, 2]
+    dists = np.sqrt(np.sum(diffs ** 2, axis=-1))  # Shape = [b, n_x, n_ext]
+
+    # Sort the pairs by their distance.
+    idxs_sorted = np.argsort(dists, axis=-1)
+    dists_sorted = np.take_along_axis(dists, idxs_sorted, axis=-1)
+
+    if radius:
+        # If radius is specified, find the indices of points inside it. The remaining ones mark with -1.
+        neighbors_idx = np.where(dists_sorted <= radius * (1 + 1e-5), idxs_sorted, -1)
+    else:
+        # If radius is not specified, one can already apply the limit.
+        neighbors_idx = idxs_sorted[..., :limit]
+
+    # Pair the source vertices with their neighbors by appending source indices in front of them.
+    neighbors_idx = np.pad(neighbors_idx[..., np.newaxis], [(0, 0), (0, 0), (0, 0), (1, 0)])
+    neighbors_idx[:, :, :, 0] += np.arange(X.shape[1])[np.newaxis, :, np.newaxis]
+
+    # Initialize the (yet empty) list of graphs in COO format.
+    coo_graphs = []
+
+    if randomized:
+        # Shuffle and limit the results, if exceeding.
+        def mapping(x: np.ndarray) -> np.ndarray:
+            return shuffle(x[x[:, 1] >= 0])[:limit]
+    else:
+        # Just limit the results, if exceeding.
+        def mapping(x: np.ndarray) -> np.ndarray:
+            return x[x[:, 1] >= 0][:limit]
+
+    for neighbors_idx_in_batch in neighbors_idx:
+        # Repeat over each element of the batch.
+
+        neighbors = list(map(
+            # Mapping prepared earlier.
+            mapping,
+
+            # Relevant neighbors' indices.
+            neighbors_idx_in_batch
+        ))
+
+        # Flatten the neighbors list to a single array of shape [_, 2].
+        neighbors = np.concatenate(neighbors, axis=0)
+
+        # Append the COO representation to the list.
+        coo_graphs.append(neighbors)
+
+    return coo_graphs

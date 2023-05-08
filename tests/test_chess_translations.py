@@ -1,5 +1,5 @@
 def test_field_to_int_and_reverse():
-    from chessgnn.chess.translations import int_to_field, field_to_int
+    from chessgnn.chess_utils.translations import int_to_field, field_to_int
     assert int_to_field[0] == '--'
     assert field_to_int['-'] == 0
     assert field_to_int['--'] == 0

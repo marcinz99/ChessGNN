@@ -1,7 +1,7 @@
 import itertools
 import numpy as np
 import tensorflow as tf
-from chessgnn.chess.connectivity import create_adjacency_matrix
+from chessgnn.chess_utils.connectivity import create_adjacency_matrix
 
 
 # UCI square code to node index

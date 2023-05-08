@@ -1,7 +1,7 @@
 import chess
 import numpy as np
 import pandas as pd
-from chessgnn.chess.translations import field_to_int, piece_placement_from_fen_code
+from chessgnn.chess_utils.translations import field_to_int, piece_placement_from_fen_code
 from typing import List, Tuple
 
 
@@ -305,3 +305,18 @@ def generate_boards_daraframe(games_df: pd.DataFrame, n_from: int, n_to: int) ->
     print("> Done!")
 
     return moves
+
+
+def games_consistency_check(moves: pd.DataFrame) -> None:
+    player_mask = np.where(np.arange(32) < 16, 0, 6)
+
+    for k in range(moves.shape[0]):
+        print(f"\rIteration {k + 1}", end='')
+        recreated = np.zeros(64, dtype=np.uint8)
+        for i, j in zip(moves['piece_tracking'][k], moves['piece_typing'][k] + player_mask):
+            if i > 0:
+                recreated[i - 1] = j
+
+        np.testing.assert_array_equal(moves['piece_placement'][k], recreated, str(k))
+
+    print("\nAll tested passed successfully")

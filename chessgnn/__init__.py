@@ -1,4 +1,4 @@
 __all__ = [
-    '.chess',
+    '.chess_utils',
     '.utils'
 ]

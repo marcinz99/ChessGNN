@@ -1,4 +1,6 @@
 __all__ = [
     '.chess_utils',
-    '.utils'
+    '.gnn',
+    '.graphchess',
+    '.utils',
 ]

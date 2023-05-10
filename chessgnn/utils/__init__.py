@@ -1,3 +1,4 @@
 __all__ = [
-    '.graph_processing'
+    '.graph_processing',
+    '.random_graphs',
 ]

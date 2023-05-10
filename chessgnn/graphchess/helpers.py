@@ -1,5 +1,5 @@
 import tensorflow as tf
-from gnn.layers import (
+from chessgnn.gnn.layers import (
     ConcatEdgesEndsOnlyLayer,
     ConcatEdgeWithEndsLayer,
     ConcatGlobalsWithAnythingLayer,

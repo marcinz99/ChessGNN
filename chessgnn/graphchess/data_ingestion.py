@@ -36,7 +36,7 @@ feature_specs = {
 }
 
 
-def get_dataset(feature_specs, data_file_path=None, data_folder_path=None, shuffle=False):
+def get_dataset(data_file_path=None, data_folder_path=None, shuffle=False):
     def data_generator():
         filelist = [data_file_path] if data_file_path else os.listdir(data_folder_path)
 

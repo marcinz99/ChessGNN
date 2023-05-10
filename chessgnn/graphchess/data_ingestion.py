@@ -61,6 +61,15 @@ def get_dataset(data_file_path=None, data_folder_path=None, shuffle=False):
     return ds
 
 
+def select_targets(input_list, target_list):
+    def selector(x):
+        return (
+            {k: v for k, v in x.items() if k in input_list},
+            {k: v for k, v in x.items() if k in target_list},
+        )
+    return selector
+
+
 def get_squarewise_features(piece_typing, piece_tracking, en_passant_target):
     """
     > 6x binary - piece type

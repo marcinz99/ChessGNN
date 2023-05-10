@@ -5,7 +5,7 @@ import tensorflow as tf
 
 @pytest.fixture
 def random_graph():
-    from utils.random_graphs import sample_graph_scale_free
+    from chessgnn.utils.random_graphs import sample_graph_scale_free
 
     coo = sample_graph_scale_free(n=20, min_k=0, max_k=5, cauchy_scale=2.5)
 
@@ -20,7 +20,7 @@ def random_graph():
 
 
 def test_gather_nodes(random_graph):
-    from gnn.layers import GatherNodesLayer
+    from chessgnn.gnn.layers import GatherNodesLayer
     graph = random_graph
 
     gather_nodes = GatherNodesLayer()
@@ -37,7 +37,7 @@ def test_gather_nodes(random_graph):
 
 
 def test_filter_nodes(random_graph):
-    from gnn.layers import FilterNodesLayer
+    from chessgnn.gnn.layers import FilterNodesLayer
     graph = random_graph
 
     filter_nodes = FilterNodesLayer()
@@ -55,7 +55,7 @@ def test_filter_nodes(random_graph):
 
 
 def test_scatter_and_aggregate_sum(random_graph):
-    from gnn.layers import ScatterAndAggregateLayer
+    from chessgnn.gnn.layers import ScatterAndAggregateLayer
     graph = random_graph
 
     scatter_and_aggregate_sum = ScatterAndAggregateLayer(agg_method='sum')
@@ -74,7 +74,7 @@ def test_scatter_and_aggregate_sum(random_graph):
 
 
 def test_scatter_and_aggregate_mean(random_graph):
-    from gnn.layers import ScatterAndAggregateLayer
+    from chessgnn.gnn.layers import ScatterAndAggregateLayer
     graph = random_graph
 
     scatter_and_aggregate_mean = ScatterAndAggregateLayer(agg_method='mean')
@@ -96,7 +96,7 @@ def test_scatter_and_aggregate_mean(random_graph):
 
 
 def test_scatter_and_aggregate_max(random_graph):
-    from gnn.layers import ScatterAndAggregateLayer
+    from chessgnn.gnn.layers import ScatterAndAggregateLayer
     graph = random_graph
 
     scatter_and_aggregate_max = ScatterAndAggregateLayer(agg_method='max')
@@ -118,7 +118,7 @@ def test_scatter_and_aggregate_max(random_graph):
 
 
 def test_scatter_and_softmax(random_graph):
-    from gnn.layers import ScatterAndSoftmaxLayer
+    from chessgnn.gnn.layers import ScatterAndSoftmaxLayer
     graph = random_graph
 
     scatter_and_softmax = ScatterAndSoftmaxLayer()
@@ -138,7 +138,7 @@ def test_scatter_and_softmax(random_graph):
 
 
 def test_concat_edges_ends_only(random_graph):
-    from gnn.layers import ConcatEdgesEndsOnlyLayer
+    from chessgnn.gnn.layers import ConcatEdgesEndsOnlyLayer
     graph = random_graph
 
     concat_edges_ends_only = ConcatEdgesEndsOnlyLayer()
@@ -159,7 +159,7 @@ def test_concat_edges_ends_only(random_graph):
 
 
 def test_concat_edge_with_ends(random_graph):
-    from gnn.layers import ConcatEdgeWithEndsLayer
+    from chessgnn.gnn.layers import ConcatEdgeWithEndsLayer
     graph = random_graph
 
     concat_edge_with_ends = ConcatEdgeWithEndsLayer()
@@ -180,7 +180,7 @@ def test_concat_edge_with_ends(random_graph):
 
 
 def test_concat_edge_with_single_end(random_graph):
-    from gnn.layers import ConcatEdgeWithSingleEndLayer
+    from chessgnn.gnn.layers import ConcatEdgeWithSingleEndLayer
     graph = random_graph
 
     concat_edge_with_single_end = ConcatEdgeWithSingleEndLayer()
@@ -199,7 +199,7 @@ def test_concat_edge_with_single_end(random_graph):
 
 
 def test_concat_globals_with_anything(random_graph):
-    from gnn.layers import ConcatGlobalsWithAnythingLayer
+    from chessgnn.gnn.layers import ConcatGlobalsWithAnythingLayer
     graph = random_graph
 
     concat_globals_with_anything = ConcatGlobalsWithAnythingLayer()
@@ -220,7 +220,7 @@ def test_concat_globals_with_anything(random_graph):
 
 
 def test_cluster_pooling_new_coo(random_graph):
-    from gnn.layers import ClusterPoolingNewCOOLayer
+    from chessgnn.gnn.layers import ClusterPoolingNewCOOLayer
     graph = random_graph
 
     cluster_pooling_new_coo = ClusterPoolingNewCOOLayer()

@@ -1,6 +1,6 @@
 import tensorflow as tf
-from gnn.layers import ConcatEdgesEndsOnlyLayer, ConcatGlobalsWithAnythingLayer
-from gnn.structures import leaky_relu
+from chessgnn.gnn.layers import ConcatEdgesEndsOnlyLayer, ConcatGlobalsWithAnythingLayer
+from chessgnn.gnn.structures import leaky_relu
 
 
 def input_block(pos_feats_input, glob_feats_input, legal_moves_input, receivers, senders):

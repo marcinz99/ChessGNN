@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import tensorflow as tf
 from tensorflow.data import Dataset
-from chess_utils.connectivity import create_adjacency_matrix
+from chessgnn.chess_utils.connectivity import create_adjacency_matrix
 
 feature_specs = {
     # Inputs

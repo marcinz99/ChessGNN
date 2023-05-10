@@ -4,8 +4,6 @@ from chessgnn.gnn.layers import (
     ScatterAndAggregateLayer,
     ConcatEdgesEndsOnlyLayer,
     ScatterAndSoftmaxLayer,
-    ConcatEdgeWithEndsLayer,
-    ConcatGlobalsWithAnythingLayer,
 )
 
 
@@ -42,23 +40,3 @@ def multihead_gat(v_set, receivers, senders, f_mid, k_heads, head_f_out, activat
 
 def leaky_relu():
     return tf.keras.layers.LeakyReLU(alpha=0.3)
-
-
-def full_block(v_prev, e_prev, u_prev, receivers, senders, name):
-    e = ConcatEdgeWithEndsLayer()([v_prev, e_prev, receivers, senders])
-    e = tf.keras.layers.Dense(units=32, activation=leaky_relu())(e)
-    e = ConcatGlobalsWithAnythingLayer()([u_prev, e])
-    e = tf.keras.layers.Dense(units=48, activation=leaky_relu())(e)
-    v = ScatterAndAggregateLayer(agg_method='mean')([v_prev, e, receivers])
-    v = multihead_gat(v, receivers, senders, f_mid=48, k_heads=24, head_f_out=2, activation=leaky_relu())
-    u = tf.keras.layers.GlobalAveragePooling1D(keepdims=True)(v)
-
-    v = tf.keras.layers.Add()([v_prev, v])
-    e = tf.keras.layers.Add()([e_prev, e])
-    u = tf.keras.layers.Add()([u_prev, u])
-
-    v = tf.keras.layers.LayerNormalization(name=f'{name}_V')(v)
-    e = tf.keras.layers.LayerNormalization(name=f'{name}_E')(e)
-    u = tf.keras.layers.LayerNormalization(name=f'{name}_U')(u)
-
-    return v, e, u

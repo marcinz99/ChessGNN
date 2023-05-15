@@ -69,15 +69,15 @@ def piece_encoding_from_fen_code(fen_code: str, en_passant_target: int = 0) -> n
 
     return np.concatenate([
         (
-                np.c_[np.eye(7, dtype=int)[:, 1:], np.arange(14).reshape(2, 7)[::-1].T > 7]
-                [np.where(placement_rec <= 6, placement_rec, 0)]
-                + np.c_[np.eye(7, dtype=int)[:, 1:], np.arange(14).reshape(2, 7).T > 7]
-                [np.where(placement_rec > 6, placement_rec - 6, 0)]
+            np.c_[np.eye(7, dtype=int)[:, 1:], np.arange(14).reshape(2, 7)[::-1].T > 7]
+            [np.where(placement_rec <= 6, placement_rec, 0)]
+            + np.c_[np.eye(7, dtype=int)[:, 1:], np.arange(14).reshape(2, 7).T > 7]
+            [np.where(placement_rec > 6, placement_rec - 6, 0)]
         ),
         (
             (np.transpose(np.mgrid[:8, :8], axes=[1, 2, 0]).reshape(-1, 2).sum(axis=-1) % 2 == 1)
             .astype(int)
-            .reshape(-1, 1),
+            .reshape(-1, 1)
         ),
         0.3 * (np.transpose(np.mgrid[:8, :8], axes=[1, 2, 0]).reshape(-1, 2) - 3.5).astype(np.float32),
         (np.arange(64) == (en_passant_target - 1)).reshape(-1, 1)

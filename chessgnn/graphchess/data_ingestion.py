@@ -36,7 +36,7 @@ feature_specs = {
 }
 
 
-def get_dataset(data_file_path=None, data_folder_path=None, shuffle=False):
+def get_dataset(data_file_path=None, data_folder_path=None, shuffle=False, drop_duplicates=0):
     def data_generator():
         filelist = [data_file_path] if data_file_path else os.listdir(data_folder_path)
 
@@ -47,6 +47,10 @@ def get_dataset(data_file_path=None, data_folder_path=None, shuffle=False):
                 data = pd.read_parquet(filename, columns=list(feature_specs.keys()))
 
             data = data[data['plies_till_end'] != 0]
+
+            if drop_duplicates > 0:
+                data['hash'] = data.apply(lambda x: '|'.join(x['piece_tracking'].astype(str)), axis='columns')
+                data = data[data.groupby('hash').cumcount() < drop_duplicates]
 
             if shuffle:
                 data = data.sample(frac=1).reset_index(drop=True)

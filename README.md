@@ -1,2 +1,3 @@
 # ChessGNN
-This repository is intended as a my working repo for the Master Thesis in Computer Science. Some utils and various stuff will be here.
+
+This repository accompanies my Master Thesis in Computer Science, “Exploring the applicability of graph neural networks for chess engines”.

@@ -2,9 +2,11 @@
 
 This repository accompanies my Master Thesis in Computer Science, “Exploring the applicability of graph neural networks for chess engines”. Graph neural networks (Graph Networks specifically) are proposed there to be used for the analysis of the board states for the move prediction (in particular direct move prediction).
 
+Full text available at: https://www.researchgate.net/publication/372479681_Exploring_the_applicability_of_graph_neural_networks_for_chess_engines
+
 Please, keep in mind that the work was primarily focused on the GNNs themselves. In particular, it is shown how convenient it is to perform graph-based tasks for different tasks that can be defined.
 
-This repo is meant mostly for the archival purposes.
+Also, this repo is meant mostly for the archival purposes.
 
 ### Abstract of the Thesis
 
